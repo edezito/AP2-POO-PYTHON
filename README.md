@@ -51,8 +51,5 @@
     <li>Escolhe qual cadastro deseja atualizar e insere as novas informações.</li>
 </ul>
 
-<h2>UML</h2>
-<p><em>Diagrama de classes UML e outros detalhes gráficos serão adicionados para representar visualmente os relacionamentos e fluxos do sistema.</em></p>
-
 <hr>
 <p>Este projeto oferece um sistema robusto e eficiente para gerenciar todos os aspectos de pedidos e cadastros, facilitando a gestão tanto para clientes quanto para colaboradores.</p>
