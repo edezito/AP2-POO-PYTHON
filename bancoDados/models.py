@@ -22,7 +22,7 @@ class Pedido(Base):
     cliente_id = Column(Integer, ForeignKey('clientes.id'))
 
     cliente = relationship('Cliente', back_populates='pedidos')
-    itens_pedido = relationship('PedidoItem', back_populates='pedido', cascade="all, delete-orphan")
+    itens_pedido = relationship('PedidoItem', back_populates='pedido', cascade="all, delete-orphan") 
 
 class Item(Base):
     __tablename__ = 'itens'
