@@ -2,11 +2,17 @@ from config import Base, engine, SessionLocal
 
 def import_models():
     from bancoDados.models import (
-        Clientes,
+        Cliente,
         Pedido,
-        Itens,
-        Entrega,
-        Colaborador
+        Item,
+        PedidoItem,
+        Estoque,
+        Fornecedor,
+        Compra,
+        CompraItem,
+        Colaborador,
+        TransacaoFinanceira,
+        Fidelidade
     )
 
 # Criação das tabelas no banco de dados

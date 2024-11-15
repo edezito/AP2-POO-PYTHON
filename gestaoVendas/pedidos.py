@@ -3,7 +3,7 @@ from datetime import datetime
 from sqlalchemy.orm import Session
 from bancoDados.models import Itens, PedidoItem, Pedido, Clientes
 
-from .consultasdb import consultas_BD
+from ..funcionalidades.consultasdb import consultas_BD
 
 class realizarPedidos:
     def __init__(self):
