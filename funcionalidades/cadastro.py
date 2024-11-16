@@ -1,16 +1,17 @@
 from sqlalchemy.orm import Session
 
 from .consultasdb import consultas_BD
-from bancoDados.models import Clientes, Itens, Colaborador
+from bancoDados.models import Cliente, Item, Colaborador
 
 class cadastro():
     def cadastro_Cliente(self, db:Session):
         print("Cadastro de Cliente")
         nome = input("Nome: ")
+        cpf = input("CPF: ")
         endereco = input("Endereço: ")
         telefone = input("Telefone: ")
 
-        novo_cliente = Clientes(nome=nome, endereco=endereco, telefone=telefone)
+        novo_cliente = Cliente(nome=nome, cpf=cpf, endereco=endereco, telefone=telefone)
 
         db.add(novo_cliente)
         db.commit()
@@ -22,7 +23,7 @@ class cadastro():
         nome = input(("Nome do Produto: "))
         preco = float(input("Preço: "))
 
-        novo_item = Itens(nome=nome, preco=preco)
+        novo_item = Item(nome=nome, preco=preco)
         db.add(novo_item)
         db.commit()
         print(f'Item {nome} cadastrado com sucesso!')
@@ -50,19 +51,16 @@ class Cadastrar:
                 print("=" * 50)
                 try:
                     opcaoCadastrar = int(input(
-                        "[1] - CLIENTE\n"
-                        "[2] - ITEM\n"
-                        "[3] - COLABORADOR\n"
-                        "[4] - SAIR\n"
+                        "[1] - ITEM\n"
+                        "[2] - COLABORADOR\n"
+                        "[3] - SAIR\n"
                     ))
 
                     if opcaoCadastrar == 1:
-                        self.cadastro.cadastro_Cliente(db)
-                    elif opcaoCadastrar == 2:
                         self.cadastro.cadastro_Item(db)
-                    elif opcaoCadastrar == 3:
+                    elif opcaoCadastrar == 2:
                         self.cadastro.cadastro_Colaborador(db)
-                    elif opcaoCadastrar == 4:
+                    elif opcaoCadastrar == 3:
                         print("Saindo do sistema. Até logo!")
                         break
                     else:

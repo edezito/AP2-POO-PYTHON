@@ -1,9 +1,9 @@
 from datetime import datetime
 
 from sqlalchemy.orm import Session
-from bancoDados.models import Itens, PedidoItem, Pedido, Clientes
+from bancoDados.models import Item, PedidoItem, Pedido, Cliente
 
-from ..funcionalidades.consultasdb import consultas_BD
+from funcionalidades.consultasdb import consultas_BD
 
 class realizarPedidos:
     def __init__(self):
@@ -23,7 +23,7 @@ class realizarPedidos:
             codigo_selecionado = input("\n\033[93mDigite o código do produto desejado:\033[0m ")
 
             #SELECIONAR PEDIDO
-            item_selecionado = db.query(Itens).filter_by(id = codigo_selecionado).first()
+            item_selecionado = db.query(Item).filter_by(id = codigo_selecionado).first()
             if not item_selecionado:
                 print(f"\033[91mProduto com código {codigo_selecionado} não encontrado. Tente novamente.\033[0m")
                 continuar = input("Tente novamente? (S/N): ")
@@ -49,7 +49,7 @@ class realizarPedidos:
                         print("\033[91mO nome do cliente não pode estar vazio.\033[0m")
                         continue
                     
-                    cliente = db.query(Clientes).filter(Clientes.nome.ilike(f"%{nome_cliente}%")).first()
+                    cliente = db.query(Cliente).filter(Cliente.nome.ilike(f"%{nome_cliente}%")).first()
                     
                     if not cliente:
                         print(f"\033[91mNão encontramos um cliente com o nome {nome_cliente}. Tente novamente.\033[0m")
