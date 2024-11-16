@@ -1,6 +1,8 @@
 from funcionalidades.cadastro import Cadastrar, Atualizar, Excluir
 from gestaoVendas.pedidos import realizarPedidos
 from funcionalidades.consultasdb import consultas_BD, Consultar
+from gestaoCliente.app import MenuCliente
+
 from sqlalchemy.orm import Session
 from config import get_db
 
@@ -20,7 +22,8 @@ class Main():
                 opcEntrada = int(input("\nEscolha uma opção:"
                                        "\n[1] - CLIENTE"
                                        "\n[2] - COLABORADOR"
-                                       "\n[3] - SAIR\n"))
+                                       "\n[3] - SAIR\n"
+                                       "Selecione uma opção: "))
 
                 if opcEntrada == 1:
                     self.menu_cliente(db)
@@ -35,41 +38,10 @@ class Main():
                 print("Entrada inválida, por favor digite um número.")
 
     def menu_cliente(self, db: Session):
-        print("\n                  CLIENTE                  ")
-        print("=" * 50)
+        menuClientes = MenuCliente(db)
+        menuClientes.menuIncial(db)
 
-
-        #SELECIONAR OPÇÕES
-
-        try:
-            opcCliente = int(input(
-                "[1] - REALIZAR PEDIDO\n"
-                "[2] - CONSULTAR PEDIDOS\n"
-                "[3] - EXCLUIR PEDIDOS\n"
-                "[4] - ATUALIZAR PEDIDOS\n"
-                "[5] - VOLTAR\n"
-            ))
-        except ValueError:
-            print("Entrada inválida, por favor digite um número.")
-            return
-
-        if opcCliente in [1, 2, 3, 4]:
-                pedidos = realizarPedidos()
-                consultas = consultas_BD()
-
-                if opcCliente == 1:
-                    pedidos.realizar_Pedido(db)
-                elif opcCliente == 2:
-                    consultas.consultar_Pedidos(db)
-                elif opcCliente ==3:
-                    pedidos.excluir_Pedidos(db)
-                elif opcCliente ==4:
-                    pedidos.atualizar_Pedidos(db)
-        elif opcCliente == 4:
-            print("Voltando ao menu inicial...")
-            return
-        else:
-            print("Opção Inválida, escolha um número entre 1 e 3.")
+        
 
     def menu_colaborador(self, db: Session):
         print("\n                  EMPRESA                  ")

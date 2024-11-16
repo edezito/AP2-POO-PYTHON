@@ -1,10 +1,10 @@
 from sqlalchemy.orm import Session
-from bancoDados.models import Pedido, Itens, Clientes, Colaborador
+from bancoDados.models import Pedido, Item, Cliente, Colaborador
 
 class consultas_BD():
 
     def consultar_Item(self, db: Session):
-        itens_cadastrados = db.query(Itens).all()
+        itens_cadastrados = db.query(Item).all()
         
         if not itens_cadastrados:
             print("\033[91mNão há produtos disponíveis no momento. Operação cancelada.\033[0m")
@@ -28,7 +28,7 @@ class consultas_BD():
                 print("\033[91mO nome do cliente não pode estar vazio. Tente novamente.\033[0m")
                 continue
 
-            cliente = db.query(Clientes).filter(Clientes.nome.ilike(f"%{nome_cliente}%")).first()
+            cliente = db.query(Cliente).filter(Cliente.nome.ilike(f"%{nome_cliente}%")).first()
 
             if not cliente:
                 print(f"\033[91mNão encontramos um cliente com o nome {nome_cliente}. Tente novamente.\033[0m")
