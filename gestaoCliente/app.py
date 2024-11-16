@@ -1,11 +1,11 @@
-from .autenticacao import autenticacaoCliente
+from .autenticacao import AutenticacaoCliente
 from gestaoVendas.pedidos import realizarPedidos
 
 from sqlalchemy.orm import Session
 
 class MenuCliente:
     def __init__(self, db: Session):
-        self.autenticacao = autenticacaoCliente()
+        self.autenticacao = AutenticacaoCliente()
         self.pedidos = realizarPedidos()
 
     def menuIncial(self, db: Session):

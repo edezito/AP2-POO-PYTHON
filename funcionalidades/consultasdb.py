@@ -8,12 +8,14 @@ class consultas_BD():
         
         if not itens_cadastrados:
             print("\033[91mNão há produtos disponíveis no momento. Operação cancelada.\033[0m")
-            return
+            return False
         
-        for itens in itens_cadastrados:
-            print(f'ID: {itens.id}')
-            print(f'Nome: {itens.nome}')
-            print(f'Preço: {itens.preco}')
+        print("\033[96m=== Lista de Produtos Disponíveis ===\033[0m")
+        for item in itens_cadastrados:
+            print(f'\033[92mID: {item.id}\033[0m')
+            print(f'\033[92mNome: {item.nome}\033[0m')
+            print(f'\033[92mPreço: {item.preco:.2f}\033[0m')
+        return True
 
     def consultar_Pedidos(self, db: Session):
         while True:

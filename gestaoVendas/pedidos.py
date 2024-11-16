@@ -15,74 +15,74 @@ class realizarPedidos:
         
 
     def realizar_Pedido(self, db: Session):
-        
-        #ITENS DISPONÍVEIS
-        self.consulta_item.consultar_Item(db)
+        if not self.consulta_item.consultar_Item(db):
+            return
 
         while True:
-            codigo_selecionado = input("\n\033[93mDigite o código do produto desejado:\033[0m ")
-
-            #SELECIONAR PEDIDO
-            item_selecionado = db.query(Item).filter_by(id = codigo_selecionado).first()
-            if not item_selecionado:
-                print(f"\033[91mProduto com código {codigo_selecionado} não encontrado. Tente novamente.\033[0m")
-                continuar = input("Tente novamente? (S/N): ")
-                if continuar.lower() != 's':
-                    break
-                continue
-
-            if item_selecionado:
-                print(f"Produto '{item_selecionado.nome}' adicionado ao pedido.")
-
-                #SELECIONAR QUANTIDADE
-                quantidade = int(input(f"Digite a quantidade do produto '{item_selecionado.nome}': "))
-
-                # ID - CLIENTE 
-                while True:
-                    nome_cliente = input("\n\033[93mDigite o seu nome (ou digite 'sair' para encerrar):\033[0m").strip()
-                    
-                    if nome_cliente.lower() == 'sair':
-                        print("\033[92mEncerrando a busca.\033[0m")
+            try:
+                codigo_selecionado = input("\n\033[93mDigite o código do produto desejado: \033[0m").strip()
+                if not codigo_selecionado.isdigit():
+                    print("\033[91m Código inválido. Por favor, digite um número.\033[0m")
+                    continue
+                
+                item_selecionado = db.query(Item).filter_by(id=int(codigo_selecionado)).first()
+                if not item_selecionado:
+                    print(f"\033[91m Produto com código {codigo_selecionado} não encontrado. Tente novamente.\033[0m")
+                    continuar = input("Tentar novamente? (S/N): ").strip().lower()
+                    if continuar != 's':
+                        print("\033[92mOperação cancelada pelo usuário.\033[0m")
                         break
+                    continue
+
+                print(f"\033[92m Produto '{item_selecionado.nome}' adicionado ao pedido.\033[0m")
+                while True:
+                    try:
+                        quantidade = int(input(f"Digite a quantidade do produto '{item_selecionado.nome}': ").strip())
+                        if quantidade <= 0:
+                            print("\033[91m A quantidade deve ser maior que zero.\033[0m")
+                            continue
+                        break
+                    except ValueError:
+                        print("\033[91m Entrada inválida. Por favor, digite um número.\033[0m")
+
+                while True:
+                    nome_cliente = input("\n\033[93mDigite o seu nome (ou digite 'sair' para encerrar): \033[0m").strip()
+                    if nome_cliente.lower() == 'sair':
+                        print("\033[92mOperação encerrada pelo usuário.\033[0m")
+                        return
 
                     if not nome_cliente:
-                        print("\033[91mO nome do cliente não pode estar vazio.\033[0m")
+                        print("\033[91m O nome do cliente não pode estar vazio.\033[0m")
                         continue
                     
                     cliente = db.query(Cliente).filter(Cliente.nome.ilike(f"%{nome_cliente}%")).first()
-                    
                     if not cliente:
-                        print(f"\033[91mNão encontramos um cliente com o nome {nome_cliente}. Tente novamente.\033[0m")
+                        print(f"\033[91m Cliente com o nome '{nome_cliente}' não encontrado. Tente novamente.\033[0m")
                     else:
-                        print(f"\033[92mCliente encontrado: {cliente.nome}\033[0m")
+                        print(f"\033[92m Cliente encontrado: {cliente.nome}\033[0m")
                         break
-                    
-                
-                cliente_id = cliente.id
 
-
-            #ADICIONAR PEDIDO
-            novo_pedido = Pedido(
+                novo_pedido = Pedido(
                     data_pedido=datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
                     quantidade_pedido=quantidade,
                     id_clientes=cliente.id
                 )
 
-            #ADICIONAR PEDIDO NO BD (CREATE)
-            db.add(novo_pedido)
-            db.commit()
+                db.add(novo_pedido)
+                db.commit()
 
-            #ADICIONAR ITEM AO PEDIDO
-            pedido_item = PedidoItem(
+                pedido_item = PedidoItem(
                     pedido_id=novo_pedido.id,
                     item_id=item_selecionado.id,
                     quantidade=quantidade
                 )
-            db.add(pedido_item)
-            db.commit()
+                db.add(pedido_item)
+                db.commit()
 
-            print("\033[92mPedido salvo com sucesso.\033[0m")
-            break
+                print("\033[92m Pedido salvo com sucesso.\033[0m")
+                break
+            except Exception as e:
+                print(f"\033[91m Ocorreu um erro: {str(e)}\033[0m")
 
     def excluir_Pedidos(self, db: Session):
         

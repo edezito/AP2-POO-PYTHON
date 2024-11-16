@@ -19,7 +19,7 @@ class Main():
 
         while True:
             try:
-                opcEntrada = int(input("\nEscolha uma opção:"
+                opcEntrada = int(input("\nEscolha uma opção"
                                        "\n[1] - CLIENTE"
                                        "\n[2] - COLABORADOR"
                                        "\n[3] - SAIR\n"
