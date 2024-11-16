@@ -1,6 +1,5 @@
 from funcionalidades.cadastro import Cadastrar, Atualizar, Excluir
-from gestaoVendas.pedidos import realizarPedidos
-from funcionalidades.consultasdb import consultas_BD, Consultar
+from funcionalidades.consultasdb import Consultar
 from gestaoCliente.app import MenuCliente
 
 from sqlalchemy.orm import Session

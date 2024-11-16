@@ -5,6 +5,7 @@ from bancoDados.models import Cliente
 class AutenticacaoCliente:
     def __init__(self):
         self.cadastro = cadastro()
+        self.opcCPF = None  # Atributo para armazenar o CPF
 
     def autenticar(self, db: Session):
         while True:
@@ -16,14 +17,14 @@ class AutenticacaoCliente:
                                        "\033[94mSelecione uma opção: \033[0m"))
                 
                 if opc_cliente == 1:
-                    opcCPF = input("\033[94mDigite seu CPF: \033[0m")
-                    cliente = db.query(Cliente).filter(Cliente.cpf.ilike(f"%{opcCPF}%")).first()
+                    self.opcCPF = input("\033[94mDigite seu CPF: \033[0m")  # Armazena o CPF aqui
+                    cliente = db.query(Cliente).filter(Cliente.cpf.ilike(f"%{self.opcCPF}%")).first()
                     
                     if not cliente:
-                        print(f"\033[91m\n Não encontramos um cliente com o CPF {opcCPF}. Tente novamente.\033[0m\n")
+                        print(f"\033[91m\n Não encontramos um cliente com o CPF {self.opcCPF}. Tente novamente.\033[0m\n")
                     else:
                         print(f"\033[92m\n Olá, {cliente.nome}! Seja bem-vindo!\033[0m\n")
-                        break 
+                        break
                 elif opc_cliente == 2:
                     print("\033[93m\nRedirecionando para o cadastro...\033[0m")
                     self.cadastro.cadastro_Cliente(db)

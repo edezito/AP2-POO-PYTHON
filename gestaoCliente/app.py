@@ -1,12 +1,16 @@
 from .autenticacao import AutenticacaoCliente
-from gestaoVendas.pedidos import realizarPedidos
+from gestaoVendas.pedidos import pedidos
+from .historicoPedidos import HistoricoPedidos
+from .fidelidade import programaFidelidade
 
 from sqlalchemy.orm import Session
 
 class MenuCliente:
     def __init__(self, db: Session):
         self.autenticacao = AutenticacaoCliente()
-        self.pedidos = realizarPedidos()
+        self.pedidos = pedidos(self.autenticacao)
+        self.historico_pedidos = HistoricoPedidos()
+        self.programa_fidelidade = programaFidelidade(self.autenticacao)
 
     def menuIncial(self, db: Session):
         self.autenticacao.autenticar(db)
@@ -28,9 +32,9 @@ class MenuCliente:
                 if opcCliente == 1:
                     self.pedidos.realizar_Pedido(db)
                 elif opcCliente == 2:
-                    print("Histórico")
+                    self.historico_pedidos.menuInicial(db)
                 elif opcCliente ==3:
-                    print("Fidelidade")
+                    self.programa_fidelidade.associarPontos(db)
         elif opcCliente == 4:
             print("Voltando ao menu inicial...")
             return

@@ -10,6 +10,7 @@ class Cliente(Base):
     cpf = Column(String(15), nullable=False)
     endereco = Column(String(200), nullable=False)
     telefone = Column(String(20), nullable=False)
+    pontos = Column(Integer, default=0) 
 
     pedidos = relationship('Pedido', back_populates='cliente')
     fidelidade = relationship('Fidelidade', back_populates='cliente', uselist=False)

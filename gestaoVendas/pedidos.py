@@ -4,27 +4,35 @@ from sqlalchemy.orm import Session
 from bancoDados.models import Item, PedidoItem, Pedido, Cliente
 
 from funcionalidades.consultasdb import consultas_BD
-
-class realizarPedidos:
-    def __init__(self):
+from gestaoCliente.autenticacao import AutenticacaoCliente
+class pedidos:
+    def __init__(self, autenticacao_cliente: AutenticacaoCliente):
+        self.autenticacao = autenticacao_cliente
         self.pedidos = []
 
-        #consultas
+        # consultas
         self.consulta_item = consultas_BD()
         self.consulta_pedido = consultas_BD()
-        
 
     def realizar_Pedido(self, db: Session):
+        # Verificar se os itens estão disponíveis
         if not self.consulta_item.consultar_Item(db):
+            return
+        
+        # Verificar se o cliente está autenticado
+        verificar_cliente = db.query(Cliente).filter_by(cpf=self.autenticacao.opcCPF).first()
+        if not verificar_cliente:
+            print(f"\033[91m Cliente não encontrado. Realize a autenticação primeiro.\033[0m")
             return
 
         while True:
             try:
+                # Seleção do código do produto
                 codigo_selecionado = input("\n\033[93mDigite o código do produto desejado: \033[0m").strip()
                 if not codigo_selecionado.isdigit():
                     print("\033[91m Código inválido. Por favor, digite um número.\033[0m")
                     continue
-                
+
                 item_selecionado = db.query(Item).filter_by(id=int(codigo_selecionado)).first()
                 if not item_selecionado:
                     print(f"\033[91m Produto com código {codigo_selecionado} não encontrado. Tente novamente.\033[0m")
@@ -32,45 +40,32 @@ class realizarPedidos:
                     if continuar != 's':
                         print("\033[92mOperação cancelada pelo usuário.\033[0m")
                         break
-                    continue
+                    continue  # Volta ao início para novo código
 
                 print(f"\033[92m Produto '{item_selecionado.nome}' adicionado ao pedido.\033[0m")
+
+                # Solicitação da quantidade
                 while True:
                     try:
                         quantidade = int(input(f"Digite a quantidade do produto '{item_selecionado.nome}': ").strip())
                         if quantidade <= 0:
                             print("\033[91m A quantidade deve ser maior que zero.\033[0m")
                             continue
-                        break
+                        break  # Sai do loop de quantidade se estiver correta
                     except ValueError:
                         print("\033[91m Entrada inválida. Por favor, digite um número.\033[0m")
 
-                while True:
-                    nome_cliente = input("\n\033[93mDigite o seu nome (ou digite 'sair' para encerrar): \033[0m").strip()
-                    if nome_cliente.lower() == 'sair':
-                        print("\033[92mOperação encerrada pelo usuário.\033[0m")
-                        return
-
-                    if not nome_cliente:
-                        print("\033[91m O nome do cliente não pode estar vazio.\033[0m")
-                        continue
-                    
-                    cliente = db.query(Cliente).filter(Cliente.nome.ilike(f"%{nome_cliente}%")).first()
-                    if not cliente:
-                        print(f"\033[91m Cliente com o nome '{nome_cliente}' não encontrado. Tente novamente.\033[0m")
-                    else:
-                        print(f"\033[92m Cliente encontrado: {cliente.nome}\033[0m")
-                        break
-
+                # Criação do pedido
                 novo_pedido = Pedido(
                     data_pedido=datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
                     quantidade_pedido=quantidade,
-                    id_clientes=cliente.id
+                    cliente_id=verificar_cliente.id
                 )
 
                 db.add(novo_pedido)
                 db.commit()
 
+                # Associando o item ao pedido
                 pedido_item = PedidoItem(
                     pedido_id=novo_pedido.id,
                     item_id=item_selecionado.id,
@@ -80,9 +75,17 @@ class realizarPedidos:
                 db.commit()
 
                 print("\033[92m Pedido salvo com sucesso.\033[0m")
-                break
+
+                # Perguntar se o cliente deseja adicionar outro produto ou finalizar
+                continuar_pedido = input("\nDeseja adicionar outro produto ao pedido? (S/N): ").strip().lower()
+                if continuar_pedido != 's':
+                    print("\033[92mPedido finalizado.\033[0m")
+                    break  # Sai do loop de pedidos
+
             except Exception as e:
                 print(f"\033[91m Ocorreu um erro: {str(e)}\033[0m")
+                break
+        
 
     def excluir_Pedidos(self, db: Session):
         
